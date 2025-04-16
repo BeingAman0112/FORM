@@ -1,0 +1,482 @@
+<div class="form-container">
+  <!-- Dynamic Form -->
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <!-- Form Details Section (First Section) -->
+    <div class="form-section" >
+      <h3>{{ demo2.formName }}</h3>
+      <div class="form-details-content">
+        <div class="metadata-row">
+          <span class="metadata-label">User:</span>
+          <span class="metadata-value">{{ demo2.userName }}</span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Created By:</span>
+          <span class="metadata-value">{{ demo2.createdBy }}</span>
+        </div>
+        <!-- <div class="metadata-row">
+          <span class="metadata-label">Created Date:</span>
+          <span class="metadata-value">{{ demo2.createdDate }}</span>
+        </div>
+        <div class="metadata-row" *ngIf="demo2.updatedDate">
+          <span class="metadata-label">Last Updated:</span>
+          <span class="metadata-value">{{ demo2.updatedDate }}</span>
+        </div> -->
+      </div>
+    </div>
+
+    <!-- Dynamic Form Sections -->
+    <div *ngFor="let section of demo2.component" class="form-section">
+      <h3 (click)="toggleSectionCollapse(section)" [class.collapsible]="section.canCollapsed">
+        {{ section.title }}
+        <span *ngIf="section.canCollapsed" class="collapse-icon">
+          <i class="fas" [ngClass]="{'fas fa-chevron-down': !section.isCollapsed, 'fas fa-chevron-up': section.isCollapsed}"></i>
+        </span>
+      </h3>
+      <ng-container *ngIf="!section.isCollapsed">
+        <ng-container *ngFor="let component of section.elements">
+        <!-- Input Fields -->
+        <div *ngIf="component.type === 'text'" class="form-group">
+          <label *ngIf="component.attributes.show_label">{{ component.attributes.label }}</label>
+              <input
+              [type]="component.type"
+              [formControlName]="component.attributes.field_name??''"
+              [placeholder]="component.attributes.placeholder_text??''"
+              [attr.maxlength]="component.attributes.validations?.maxlength"
+              [attr.minlength]="component.attributes.validations?.minlength"/>
+                 <div *ngIf="formGroup.get(component.attributes.field_name ?? '')?.invalid && formGroup.get(component.attributes.field_name ?? '')?.touched" class="error-message">
+                   {{ getErrorMessage(component.attributes.field_name || '') }}
+                 </div>
+
+                 <div class="action-icons" *ngIf="component.attributes.actions">
+                  <a *ngIf="component.attributes.actions.comment" (click)="onComment(component)" title="Comment">
+                    <i class="fas fa-comment-alt"></i>
+                  </a>
+                  <a *ngIf="component.attributes.actions.camera" (click)="onCamera(component)" title="Upload Photo">
+                    <i class="fas fa-camera"></i>
+                  </a>
+                  <a *ngIf="component.attributes.actions.flag" (click)="onFlag(component)" title="Flag">
+                    <i class="fas fa-flag"></i>
+                  </a>
+                  <input
+                    type="file"
+                    capture="environment"
+                    accept=".jpg, .jpeg, .png"
+                    [id]="'file_' + component.attributes.field_name"
+                    style="display: none"
+                    (change)="onFileSelected($event, component)"
+                  />
+                </div>
+                <div class="uploaded-file-name" *ngIf="component.attributes.uploadedFileName">
+                  <!-- <i class="fas fa-camera"></i> -->
+                  <img [src]="component.attributes.image_url" alt="Uploaded Image" style="max-width: 15vw; max-height: 30vh;" />
+                </div>
+                  <!-- Commnet  -->
+                <div *ngIf="visibleComments[component.attributes.field_name + '_comment']">
+                  <textarea
+                    [formControlName]="component.attributes.field_name + '_comment'"
+                    [rows]="3"
+                    placeholder="Add your comment"
+                    class="comment-box"
+                  ></textarea>
+                </div>
+        </div>
+
+        <!-- Textarea -->
+        <div *ngIf="component.type === 'textarea'" class="form-group">
+          <label *ngIf="component.attributes.show_label">{{ component.attributes.label }}</label>
+          <textarea
+            [formControlName]="component.attributes.field_name || ''"
+            [placeholder]="component.attributes.placeholder_text??''"
+            [rows]="5"
+            class="comment-box"></textarea>
+          <div *ngIf="formGroup.get(component.attributes.field_name ?? '')?.invalid && formGroup.get(component.attributes.field_name ?? '')?.touched" class="error-message">
+            {{ getErrorMessage(component.attributes.field_name || '') }}
+          </div>
+          <div class="action-icons" *ngIf="component.attributes.actions">
+            <a *ngIf="component.attributes.actions.comment" (click)="onComment(component)" title="Comment">
+              <i class="fas fa-comment-alt"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.camera" (click)="onCamera(component)" title="Upload Photo">
+              <i class="fas fa-camera"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.flag" (click)="onFlag(component)" title="Flag">
+              <i class="fas fa-flag"></i>
+            </a>
+            <input
+                    type="file"
+                    capture="environment"
+                    accept=".jpg, .jpeg, .png"
+                    [id]="'file_' + component.attributes.field_name"
+                    style="display: none"
+                    (change)="onFileSelected($event, component)"
+                  />
+          </div>
+          <div class="uploaded-file-name" *ngIf="component.attributes.uploadedFileName">
+            <img [src]="component.attributes.image_url" alt="Uploaded Image" style="max-width: 15vw; max-height: 30vh;" />
+          </div>
+            <!-- Commnet  -->
+            <div *ngIf="visibleComments[component.attributes.field_name + '_comment']">
+              <textarea
+                [formControlName]="component.attributes.field_name + '_comment'"
+                [rows]="3"
+                placeholder="Add your comment"
+                class="comment-box"
+              ></textarea>
+            </div>
+        </div>
+
+        <!-- Date Picker -->
+        <div *ngIf="component.type === 'date'" class="form-group">
+          <label *ngIf="component.attributes.show_label">{{ component.attributes.label }}</label>
+          <input
+            type="date"
+            class="date-input"
+            [formControlName]="component.attributes.field_name || ''"
+            [attr.min]="component.attributes.validations?.minDate"
+            [attr.max]="component.attributes.validations?.maxDate"
+            [required]="component.attributes.is_required??false"
+          />
+          <div *ngIf="formGroup.get(component.attributes.field_name ?? '')?.invalid && formGroup.get(component.attributes.field_name ?? '')?.touched" class="error-message">
+            {{ getErrorMessage(component.attributes.field_name??'') }}
+          </div>
+          <div class="action-icons" *ngIf="component.attributes.actions">
+            <a *ngIf="component.attributes.actions.comment" (click)="onComment(component)" title="Comment">
+              <i class="fas fa-comment-alt"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.camera" (click)="onCamera(component)" title="Upload Photo">
+              <i class="fas fa-camera"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.flag" (click)="onFlag(component)" title="Flag">
+              <i class="fas fa-flag"></i>
+            </a>
+            <input
+              type="file"
+              capture="environment"
+              accept=".jpg, .jpeg, .png"
+              [id]="'file_' + component.attributes.field_name"
+              style="display: none"
+              (change)="onFileSelected($event, component)"
+            />
+          </div>
+          <div class="uploaded-file-name" *ngIf="component.attributes.uploadedFileName">
+            <img [src]="component.attributes.image_url" alt="Uploaded Image" style="max-width: 15vw; max-height: 30vh;" />
+          </div>
+            <!-- Commnet  -->
+            <div *ngIf="visibleComments[component.attributes.field_name + '_comment']">
+              <textarea
+                [formControlName]="component.attributes.field_name + '_comment'"
+                [rows]="3"
+                placeholder="Add your comment"
+                class="comment-box"
+              ></textarea>
+            </div>
+        </div>
+
+        <!-- GroupedDropdown -->
+        <div *ngIf="component.type === 'Select'" class="form-group">
+          <label *ngIf="component.attributes.show_label">{{ component.attributes.label }}</label>
+          <app-grouped-dropdown
+            [Label]="component.attributes.label ||''"
+            [formGroup]="formGroup"
+            [fieldName]="component.attributes.field_name===undefined?'':component.attributes.field_name"
+            [placeholder]="component.attributes.placeholder_text === undefined ? '' : component.attributes.placeholder_text"
+            [group]="component.attributes.dataSource===undefined?{list:[]}:component.attributes.dataSource"
+            [isMultiSelect]="component.multiselect??false">
+        </app-grouped-dropdown>
+        <div class="action-icons" *ngIf="component.attributes.actions">
+          <a *ngIf="component.attributes.actions.comment" (click)="onComment(component)" title="Comment">
+            <i class="fas fa-comment-alt"></i>
+          </a>
+          <a *ngIf="component.attributes.actions.camera" (click)="onCamera(component)" title="Upload Photo">
+            <i class="fas fa-camera"></i>
+          </a>
+          <a *ngIf="component.attributes.actions.flag" (click)="onFlag(component)" title="Flag">
+            <i class="fas fa-flag"></i>
+          </a>
+          <input
+            type="file"
+            capture="environment"
+            accept=".jpg, .jpeg, .png"
+            [id]="'file_' + component.attributes.field_name"
+            style="display: none"
+            (change)="onFileSelected($event, component)"
+          />
+        </div>
+        <div class="uploaded-file-name" *ngIf="component.attributes.uploadedFileName">
+          <img [src]="component.attributes.image_url" alt="Uploaded Image" style="max-width: 15vw; max-height: 30vh;" />
+        </div>
+          <!-- Commnet  -->
+          <div *ngIf="visibleComments[component.attributes.field_name + '_comment']">
+            <textarea
+              [formControlName]="component.attributes.field_name + '_comment'"
+              [rows]="3"
+              placeholder="Add your comment"
+              class="comment-box"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Signature Pad -->
+        <div *ngIf="component.type === 'signature'" class="form-group">
+          <label *ngIf="component.attributes.show_label">{{ component.attributes.label }}</label>
+          <canvas #signaturePad class="signature-pad"></canvas>
+          <label>Select Pen Color:</label>
+          <input type="color" (change)="changePenColor($event)" [value]="signatureColor" />
+          <button type="button" (click)="clearSignature()">Clear</button>
+          <button type="button" (click)="saveSignature()">Save</button>
+          <div *ngIf="formGroup.get(component.attributes.field_name ?? '')?.invalid && formGroup.get(component.attributes.field_name ?? '')?.touched" class="error-message">
+            {{ getErrorMessage(component.attributes.field_name ?? '') }}
+          </div>
+          <div class="action-icons" *ngIf="component.attributes.actions">
+            <a *ngIf="component.attributes.actions.comment" (click)="onComment(component)" title="Comment">
+              <i class="fas fa-comment-alt"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.camera" (click)="onCamera(component)" title="Upload Photo">
+              <i class="fas fa-camera"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.flag" (click)="onFlag(component)" title="Flag">
+              <i class="fas fa-flag"></i>
+            </a>
+            <input
+              type="file"
+              capture="environment"
+              accept=".jpg, .jpeg, .png"
+              [id]="'file_' + component.attributes.field_name"
+              style="display: none"
+              (change)="onFileSelected($event, component)"
+            />
+          </div>
+          <div class="uploaded-file-name" *ngIf="component.attributes.uploadedFileName">
+            <img [src]="component.attributes.image_url" alt="Uploaded Image" style="max-width: 15vw; max-height: 30vh;" />
+          </div>
+            <!-- Commnet  -->
+            <div *ngIf="visibleComments[component.attributes.field_name + '_comment']">
+              <textarea
+                [formControlName]="component.attributes.field_name + '_comment'"
+                [rows]="3"
+                placeholder="Add your comment"
+                class="comment-box"
+              ></textarea>
+            </div>
+        </div>
+
+        <!-- Image Upload -->
+        <div *ngIf="component.type === 'file'" class="form-group">
+          <label *ngIf="component.attributes.show_label">{{ component.attributes.label }}</label>
+          <input type="file"
+                 accept=".jpg, .jpeg, .png"
+                 capture="environment"
+                 (change)="onFileSelect($event, component.attributes.field_name || '')"
+                 [attr.placeholder]="component.attributes.placeholder_text" />
+          <div *ngIf="uploadedImages[component.attributes.field_name || '']">
+            <img [src]="uploadedImages[component.attributes.field_name || '']" alt="Uploaded Image" width="150" />
+          </div>
+          <div *ngIf="formGroup.get(component.attributes.field_name || '')?.hasError('invalidFileType')" class="error-message">
+            {{ getErrorMessage(component.attributes.field_name || '') }}
+          </div>
+          <div *ngIf="formGroup.get(component.attributes.field_name || '')?.hasError('fileTooLarge')" class="error-message">
+            {{ getErrorMessage(component.attributes.field_name || '') }}
+          </div>
+          <div *ngIf="formGroup.get(component.attributes.field_name || '')?.invalid && formGroup.get(component.attributes.field_name || '')?.touched" class="error-message">
+            {{ getErrorMessage(component.attributes.field_name || '') }}
+          </div>
+          <div class="action-icons" *ngIf="component.attributes.actions">
+            <a *ngIf="component.attributes.actions.comment" (click)="onComment(component)" title="Comment">
+              <i class="fas fa-comment-alt"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.camera" (click)="onCamera(component)" title="Upload Photo">
+              <i class="fas fa-camera"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.flag" (click)="onFlag(component)" title="Flag">
+              <i class="fas fa-flag"></i>
+            </a>
+            <input
+            type="file"
+            capture="environment"
+            accept=".jpg, .jpeg, .png"
+            [id]="'file_' + component.attributes.field_name"
+            style="display: none"
+            (change)="onFileSelected($event, component)"
+          />
+          </div>
+          <div class="uploaded-file-name" *ngIf="component.attributes.uploadedFileName">
+            <img [src]="component.attributes.image_url" alt="Uploaded Image" style="max-width: 15vw; max-height: 30vh;" />
+          </div>
+            <!-- Commnet  -->
+            <div *ngIf="visibleComments[component.attributes.field_name + '_comment']">
+              <textarea
+                [formControlName]="component.attributes.field_name + '_comment'"
+                [rows]="3"
+                placeholder="Add your comment"
+                class="comment-box"
+              ></textarea>
+            </div>
+        </div>
+
+        <!-- Map -->
+         <div *ngIf="component.type === 'map'" class="form-group">
+          <label *ngIf="component.attributes.show_label">{{ component.attributes.label }}</label>
+          <app-map
+          [defaultLat]="component.attributes.default_lat===undefined?0:component.attributes.default_lat"
+          [defaultLng]="component.attributes.default_lng===undefined?0:component.attributes.default_lng"
+          (locationSelected)="updateLocation($event, component.attributes.field_name??'')"
+          ></app-map>
+          <div *ngIf="formGroup.get(component.attributes.field_name ?? '')?.invalid && formGroup.get(component.attributes.field_name ?? '')?.touched" class="error-message">
+            {{ getErrorMessage(component.attributes.field_name ?? '') }}
+          </div>
+          <div class="action-icons" *ngIf="component.attributes.actions">
+            <a *ngIf="component.attributes.actions.comment" (click)="onComment(component)" title="Comment">
+              <i class="fas fa-comment-alt"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.camera" (click)="onCamera(component)" title="Upload Photo">
+              <i class="fas fa-camera"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.flag" (click)="onFlag(component)" title="Flag">
+              <i class="fas fa-flag"></i>
+            </a>
+            <input
+            type="file"
+            capture="environment"
+            accept=".jpg, .jpeg, .png"
+            [id]="'file_' + component.attributes.field_name"
+            style="display: none"
+            (change)="onFileSelected($event, component)"
+          />
+          </div>
+          <div class="uploaded-file-name" *ngIf="component.attributes.uploadedFileName">
+            <img [src]="component.attributes.image_url" alt="Uploaded Image" style="max-width: 15vw; max-height: 30vh;" />
+          </div>
+            <!-- Commnet  -->
+            <div *ngIf="visibleComments[component.attributes.field_name + '_comment']">
+              <textarea
+                [formControlName]="component.attributes.field_name + '_comment'"
+                [rows]="5"
+                placeholder="Add your comment"
+                class="comment-box"
+              ></textarea>
+            </div>
+        </div>
+
+
+
+        <!-- hyper-Link -->
+        <div *ngIf="component.type === 'link'" class="form-group">
+          <label *ngIf="component.attributes.show_label">
+            {{ component.attributes.label }}
+          </label>
+          <a
+            [href]="component.attributes.url"
+            target="_blank"
+            rel="noopener noreferrer">
+            {{ component.attributes.link_text }}
+          </a>
+          <div class="action-icons" *ngIf="component.attributes.actions">
+            <a *ngIf="component.attributes.actions.comment" (click)="onComment(component)" title="Comment">
+              <i class="fas fa-comment-alt"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.camera" (click)="onCamera(component)" title="Upload Photo">
+              <i class="fas fa-camera"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.flag" (click)="onFlag(component)" title="Flag">
+              <i class="fas fa-flag"></i>
+            </a>
+            <input
+              type="file"
+              capture="environment"
+              accept=".jpg, .jpeg, .png"
+              [id]="'file_' + component.attributes.field_name"
+              style="display: none"
+              (change)="onFileSelected($event, component)"
+            />
+          </div>
+          <div class="uploaded-file-name" *ngIf="component.attributes.uploadedFileName">
+            <img [src]="component.attributes.image_url" alt="Uploaded Image" style="max-width: 15vw; max-height: 30vh;" />
+          </div>
+            <!-- Commnet  -->
+            <div *ngIf="visibleComments[component.attributes.field_name + '_comment']">
+              <textarea
+                [formControlName]="component.attributes.field_name + '_comment'"
+                [rows]="3"
+                placeholder="Add your comment"
+                class="comment-box"
+              ></textarea>
+            </div>
+        </div>
+
+        <!-- Image for guide  -->
+        <div *ngIf="component.type === 'image' && component.type === 'image'" class="form-group">
+          <label *ngIf="component.attributes.show_label">{{ component.attributes.label }}</label>
+          <img [src]="component.attributes.image_url" [alt]="component.attributes.alt_text" class="form-guide-image" />
+          <div class="action-icons" *ngIf="component.attributes.actions">
+            <a *ngIf="component.attributes.actions.comment" (click)="onComment(component)" title="Comment">
+              <i class="fas fa-comment-alt"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.camera" (click)="onCamera(component)" title="Upload Photo">
+              <i class="fas fa-camera"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.flag" (click)="onFlag(component)" title="Flag">
+              <i class="fas fa-flag"></i>
+            </a>
+            <input
+              type="file"
+              capture="environment"
+              accept=".jpg, .jpeg, .png"
+              [id]="'file_' + component.attributes.field_name"
+              style="display: none"
+              (change)="onFileSelected($event, component)"
+            />
+          </div>
+          <div class="uploaded-file-name" *ngIf="component.attributes.uploadedFileName">
+            <img [src]="component.attributes.image_url" alt="Uploaded Image" style="max-width: 15vw; max-height: 30vh;" />
+          </div>
+            <!-- Commnet  -->
+            <div *ngIf="visibleComments[component.attributes.field_name + '_comment']">
+              <textarea
+                [formControlName]="component.attributes.field_name + '_comment'"
+                [rows]="3"
+                placeholder="Add your comment"
+                class="comment-box"
+              ></textarea>
+            </div>
+        </div>
+
+        <!-- Button -->
+        <div *ngIf="component.type === 'button'">
+          <button class="form-button" [type]="component.attributes.button_type">{{ component.attributes.content }}</button>
+          <div class="action-icons" *ngIf="component.attributes.actions">
+            <a *ngIf="component.attributes.actions.comment" (click)="onComment(component)" title="Comment">
+              <i class="fas fa-comment-alt"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.camera" (click)="onCamera(component)" title="Upload Photo">
+              <i class="fas fa-camera"></i>
+            </a>
+            <a *ngIf="component.attributes.actions.flag" (click)="onFlag(component)" title="Flag">
+              <i class="fas fa-flag"></i>
+            </a>
+            <input
+              type="file"
+              capture="environment"
+              accept=".jpg, .jpeg, .png"
+              [id]="'file_' + component.attributes.field_name"
+              style="display: none"
+              (change)="onFileSelected($event, component)"
+            />
+          </div>
+          <div class="uploaded-file-name" *ngIf="component.attributes.uploadedFileName">
+            <img [src]="component.attributes.image_url" alt="Uploaded Image" style="max-width: 15vw; max-height: 30vh;" />
+          </div>
+            <!-- Commnet  -->
+            <div *ngIf="visibleComments[component.attributes.field_name + '_comment']">
+              <textarea
+                [formControlName]="component.attributes.field_name + '_comment'"
+                [rows]="3"
+                placeholder="Add your comment"
+                class="comment-box"
+              ></textarea>
+            </div>
+        </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </form>
+</div>
