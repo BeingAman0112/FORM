@@ -14,9 +14,8 @@ export class FormBuilderComponent implements OnInit {
 
   // Form data
   formData: FormJson = {
-    formName: 'New Form',
-    userName: 'Current User',
-    createdBy: 'Current User',
+    formName: '',
+    userName: '',
     component: []
   };
 
@@ -37,13 +36,11 @@ export class FormBuilderComponent implements OnInit {
     this.formBuilderForm = this.fb.group({
       formName: ['New Form', Validators.required],
       userName: ['Current User', Validators.required],
-      createdBy: ['Current User', Validators.required]
     });
 
     this.createFormForm = this.fb.group({
-      formName: ['Form', Validators.required],
-      userName: ['User', Validators.required],
-      createdBy: ['admin01', Validators.required]
+      formName: ['FORM NAME UNDEFINED', Validators.required],
+      userName: ['USERNAME', Validators.required]
     });
   }
 
@@ -64,13 +61,11 @@ export class FormBuilderComponent implements OnInit {
     this.formData = {
       formName: formValues.formName,
       userName: formValues.userName,
-      createdBy: formValues.createdBy,
       component: []
     };
     this.formBuilderForm.patchValue({
       formName: formValues.formName,
       userName: formValues.userName,
-      createdBy: formValues.createdBy
     });
 
     // Add an initial section
@@ -85,7 +80,6 @@ export class FormBuilderComponent implements OnInit {
   updateFormData(values: any): void {
     this.formData.formName = values.formName;
     this.formData.userName = values.userName;
-    this.formData.createdBy = values.createdBy;
     console.log('Form data updated:', this.formData);
   }
   // New section
@@ -121,14 +115,14 @@ export class FormBuilderComponent implements OnInit {
     // });
   }
 
-  // Show element selection sidebar for a specific section
+  // Show element selection modal for a specific section
   showElementSelectionSidebar(section: FormSection): void {
     this.selectedSection = section;
     this.showElementSelection = true;
-    console.log('Element selection sidebar shown for section:', section.title);
+    console.log('Element selection modal shown for section:', section.title);
   }
 
-  // Hide element selection sidebar
+  // Hide element selection modal
   hideElementSelectionSidebar(): void {
     this.showElementSelection = false;
     this.selectedSection = null;

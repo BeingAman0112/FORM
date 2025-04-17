@@ -1,47 +1,17 @@
 <div class="form-builder-container">
-  <!-- Left Sidebar - Component Palette -->
-  <div class="component-palette">
-    <h3>Form Builder</h3>
-
-    <!-- Create Form Button -->
-    <button class="create-form-btn" (click)="showCreateFormModal = true">
-      <i class="fas fa-plus-circle"></i> Create a Form
+  <!-- Initial State - Only New Form Button -->
+  <div class="initial-state" *ngIf="!formData || formData.component.length === 0">
+    <button class="new-form-btn" (click)="showCreateFormModal = true">
+      <i class="fas fa-plus-circle"></i> New Form
     </button>
-
-    <h4>Form Elements</h4>
-    <ul class="component-list" *ngIf="showElementSelection">
-      <li class="component-item" (click)="addTextFieldElement()">
-        <i class="fas fa-font"></i> Text
-      </li>
-      <li class="component-item" (click)="addEmailFieldElement()">
-        <i class="fas fa-envelope"></i> Email
-      </li>
-      <li class="component-item" (click)="addNumberFieldElement()">
-        <i class="fas fa-hashtag"></i> Number
-      </li>
-      <li class="component-item cancel" (click)="hideElementSelectionSidebar()">
-        <i class="fas fa-times"></i> Cancel
-      </li>
-    </ul>
-    <div class="sidebar-message" *ngIf="!showElementSelection">
-      <p>Click "Add Item" in a section to add form elements.</p>
-    </div>
   </div>
 
-  <!-- Main Form Building Area -->
-  <div class="form-building-area">
+  <!-- Main Form Building Area - Only shown after form creation -->
+  <div class="form-building-area" *ngIf="formData && formData.component.length > 0">
     <!-- Form Header with Form Name -->
     <div class="form-header">
       <h2 *ngIf="formData.formName">{{ formData.formName }}</h2>
       <div class="form-metadata">
-        <div class="metadata-row" *ngIf="formData.userName">
-          <span class="metadata-label">User:</span>
-          <span class="metadata-value">{{ formData.userName }}</span>
-        </div>
-        <div class="metadata-row" *ngIf="formData.createdBy">
-          <span class="metadata-label">Created By:</span>
-          <span class="metadata-value">{{ formData.createdBy }}</span>
-        </div>
       </div>
     </div>
 
@@ -86,16 +56,16 @@
                 <i *ngIf="element.type === 'number'" class="fas fa-hashtag"></i>
               </div>
 
-              <!-- Element Label -->
-              <div class="element-label">
-                <input type="text" [(ngModel)]="element.attributes.label"
-                       (ngModelChange)="updateFieldName(element, $event, section.title)"
-                       placeholder="Label">
-              </div>
-
-              <!-- Element Placeholder -->
-              <div class="element-placeholder">
-                <input type="text" [(ngModel)]="element.attributes.placeholder_text" placeholder="Placeholder">
+              <!-- Element Label and Placeholder -->
+              <div class="element-fields">
+                <div class="element-label">
+                  <input type="text" [(ngModel)]="element.attributes.label"
+                        (ngModelChange)="updateFieldName(element, $event, section.title)"
+                        placeholder="Label">
+                </div>
+                <div class="element-placeholder">
+                  <input type="text" [(ngModel)]="element.attributes.placeholder_text" placeholder="Placeholder">
+                </div>
               </div>
 
               <!-- Show Label Checkbox -->
@@ -117,16 +87,18 @@
           </div>
 
           <!-- Add Item Button -->
-          <button class="btn-add-element" (click)="showElementSelectionSidebar(section)">
+          <button class="btn-add" (click)="showElementSelectionSidebar(section)">
             <i class="fas fa-plus"></i> Add Item
           </button>
         </div>
       </div>
 
       <!-- Add Section Button -->
-      <button class="btn-add-section" (click)="addSection()">
-        <i class="fas fa-plus"></i> Add Section
-      </button>
+      <div class="add-section-container">
+        <button class="btn-add" (click)="addSection()">
+          <i class="fas fa-plus"></i> Add Section
+        </button>
+      </div>
     </div>
 
     <!-- Form Actions -->
@@ -156,15 +128,92 @@
             <label for="newUserName">User Name</label>
             <input type="text" id="newUserName" formControlName="userName" placeholder="Enter your username">
           </div>
-          <div class="form-group">
-            <label for="newCreatedBy">Created By</label>
-            <input type="text" id="newCreatedBy" formControlName="createdBy" placeholder="Enter creator name">
-          </div>
+
           <div class="modal-actions">
             <button type="button" class="btn-secondary" (click)="showCreateFormModal = false">Cancel</button>
             <button type="submit" class="btn-primary">Create Form</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Element Type Modal -->
+  <div class="modal" *ngIf="showElementSelection">
+    <div class="modal-content element-type-modal">
+      <div class="modal-header">
+        <h3>Create New Item Type</h3>
+        <button class="close-btn" (click)="hideElementSelectionSidebar()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body element-type-list" style="padding: 0;">
+        <div class="element-type-item" (click)="addTextFieldElement()">
+          <div class="element-type-icon">
+            <i class="fas fa-font"></i>
+          </div>
+          <div class="element-type-name">Text</div>
+        </div>
+        <div class="element-type-item" (click)="addEmailFieldElement()">
+          <div class="element-type-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="element-type-name">Email</div>
+        </div>
+        <div class="element-type-item" (click)="addNumberFieldElement()">
+          <div class="element-type-icon">
+            <i class="fas fa-hashtag"></i>
+          </div>
+          <div class="element-type-name">Number</div>
+        </div>
+        <div class="element-type-item">
+          <div class="element-type-icon">
+            <i class="fas fa-check-square"></i>
+          </div>
+          <div class="element-type-name">Drop Down</div>
+        </div>
+        <div class="element-type-item">
+          <div class="element-type-icon">
+            <i class="fas fa-align-left"></i>
+          </div>
+          <div class="element-type-name">Location</div>
+        </div>
+        <div class="element-type-item">
+          <div class="element-type-icon">
+            <i class="fas fa-align-justify"></i>
+          </div>
+          <div class="element-type-name">file upload</div>
+        </div>
+        <div class="element-type-item">
+          <div class="element-type-icon">
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <div class="element-type-name">Image</div>
+        </div>
+        <div class="element-type-item">
+          <div class="element-type-icon">
+            <i class="fas fa-list"></i>
+          </div>
+          <div class="element-type-name">Drop-down List: Select One</div>
+        </div>
+        <div class="element-type-item">
+          <div class="element-type-icon">
+            <i class="fas fa-list-ol"></i>
+          </div>
+          <div class="element-type-name">Drop-down List: Select Multiple</div>
+        </div>
+        <div class="element-type-item">
+          <div class="element-type-icon">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+          <div class="element-type-name">Select Date</div>
+        </div>
+        <div class="element-type-item">
+          <div class="element-type-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="element-type-name">Select Time</div>
+        </div>
       </div>
     </div>
   </div>
