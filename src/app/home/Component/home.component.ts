@@ -375,7 +375,340 @@ export class HomeComponent implements OnChanges {
       console.log("Flag clicked for", component.attributes.field_name);
     }
 
- Demo:any = {
+
+
+// {
+//   "component": [
+//     {
+//       "Title": "Information",
+//       "canCollapsed": true,
+//       "elements": [
+//         {
+//           "type": "text",
+//           "attributes": {
+//             "label": "Full Name",
+//             "field_name": "Name",
+//             "is_required": true,
+//             "placeholder_text": "Enter Your Name",
+//             "show_label": true,
+//             "validations": {
+//               "minlength": "3",
+//               "maxlength": "18"
+//             },
+//             "actions": {
+//               "comment": true,
+//               "camera": true,
+//               "flag": true
+//             }
+//           }
+//         },
+//         {
+//           "type": "text",
+//           "attributes": {
+//             "label": "Email",
+//             "field_name": "Email",
+//             "is_required": true,
+//             "placeholder_text": "Enter Your Email",
+//             "show_label": true,
+//             "validations": {
+//               "pattern": "^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"
+//             },
+//             "actions": {
+//               "comment": true,
+//               "camera": true,
+//               "flag": false
+//             }
+//           }
+//         },
+//         {
+//           "type": "textarea",
+//           "attributes": {
+//             "label": "Address",
+//             "field_name": "Address",
+//             "is_required": true,
+//             "placeholder_text": "Enter Your Address",
+//             "show_label": true,
+//             "actions": {
+//               "comment": false,
+//               "camera": true,
+//               "flag": true
+//             }
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       "Title": "Personal Details",
+//       "canCollapsed": true,
+//       "elements": [
+//         {
+//           "type": "text",
+//           "attributes": {
+//             "label": "Phone No.",
+//             "field_name": "Number",
+//             "is_required": true,
+//             "placeholder_text": "Enter Your Phone No.",
+//             "show_label": true,
+//             "default_value": "+91",
+//             "validations": {
+//               "minlength": "10",
+//               "maxlength": "13",
+//               "pattern": "^(\\+91)?[0-9]{10}$"
+//             },
+//             "actions": {
+//               "comment": true,
+//               "camera": true,
+//               "flag": false
+//             }
+//           }
+//         },
+//         {
+//           "type": "Select",
+//           "multiselect": false,
+//           "attributes": {
+//             "label": "Are you above 18?",
+//             "field_name": "Is adult",
+//             "placeholder_text": "is your age above 18?",
+//             "is_required": true,
+//             "show_label": true,
+//             "DataListId": "67fea30f0b3553c10431067b",
+//             "actions": {
+//               "comment": true,
+//               "camera": true,
+//               "flag": false
+//             }
+//           }
+//         },
+//         {
+//           "type": "date",
+//           "attributes": {
+//             "label": "Date of Birth",
+//             "field_name": "DOB",
+//             "is_required": true,
+//             "show_label": true,
+//             "validations": {
+//               "noFuture": "true",
+//               "minDate": "2000-01-01",
+//               "maxDate": "2025-04-16"
+//             },
+//             "actions": {
+//               "comment": true,
+//               "camera": true,
+//               "flag": false
+//             }
+//           }
+//         },
+//         {
+//           "type": "date",
+//           "attributes": {
+//             "label": "Event Date",
+//             "field_name": "Event date",
+//             "is_required": true,
+//             "show_label": true,
+//             "validations": {
+//               "noPast": "true",
+//               "minDate": "2025-04-16",
+//               "maxDate": "2025-12-31"
+//             },
+//             "actions": {
+//               "comment": true,
+//               "camera": true,
+//               "flag": false
+//             }
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       "Title": "Drop Downs",
+//       "canCollapsed": true,
+//       "elements": [
+//         {
+//           "type": "Select",
+//           "multiselect": false,
+//           "attributes": {
+//             "label": "Are you available?",
+//             "field_name": "is_available",
+//             "placeholder_text": "SELECT ONE",
+//             "DataListId": "67fea30f0b3553c10431067b",
+//             "is_required": true,
+//             "show_label": true,
+//             "actions": {
+//               "comment": true,
+//               "camera": true,
+//               "flag": false
+//             }
+//           }
+//         },
+//         {
+//           "type": "Select",
+//           "multiselect": false,
+//           "attributes": {
+//             "label": "EMPLOYMENT STATUS:",
+//             "field_name": "employment_status",
+//             "placeholder_text": "SELECT ONE",
+//             "is_required": true,
+//             "show_label": true,
+//         	"DataListId": "67fea30f0b3553c10431067b",
+//             "actions": {
+//               "comment": true,
+//               "camera": true,
+//               "flag": false
+//             }
+//           }
+//         },
+//         {
+//           "type": "Select",
+//           "multiselect": false,
+//           "attributes": {
+//             "label": "Select Skills",
+//             "field_name": "skills",
+//             "placeholder_text": "Choose your skills",
+//             "is_required": true,
+//             "show_label": true,
+//             "DataListId": "67fea30f0b3553c10431067b",
+//             "actions": {
+//               "comment": true,
+//               "camera": true,
+//               "flag": false
+//             }
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       "Title": "Grouped Dropdown",
+//       "elements": [
+//         {
+//           "type": "Select",
+//           "multiselect": false,
+//           "attributes": {
+//             "label": "Select Player",
+//             "field_name": "player",
+//             "placeholder_text": "Select Player here",
+//             "is_required": true,
+//             "show_label": true,
+//             "DataListId": "67fea30f0b3553c10431067b",
+//             "actions": {
+//               "comment": true,
+//               "camera": true,
+//               "flag": false
+//             }
+//           }
+//         },
+//         {
+//           "type": "signature",
+//           "attributes": {
+//             "label": "Signature",
+//             "field_name": "signature",
+//             "is_required": true,
+//             "show_label": true,
+//             "pen_color": "black",
+//             "actions": {
+//               "comment": false,
+//               "camera": false,
+//               "flag": false
+//             }
+//           }
+//         },
+//         {
+//           "type": "map",
+//           "attributes": {
+//             "label": "Select Location",
+//             "field_name": "location",
+//             "is_required": true,
+//             "show_label": true,
+//             "default_lat": 28.6139,
+//             "default_lng": 77.209,
+//             "actions": {
+//               "comment": true,
+//               "camera": false,
+//               "flag": false
+//             }
+//           }
+//         },
+//         {
+//           "type": "file",
+//           "attributes": {
+//             "label": "Upload Image",
+//             "field_name": "image",
+//             "is_required": true,
+//             "show_label": true,
+//             "placeholder_text": "Upload Your Image",
+//             "validations": {
+//               "pattern": "\\.(jpg|jpeg|png)$",
+//               "maxSize": "5"
+//             },
+//             "actions": {
+//               "comment": false,
+//               "camera": false,
+//               "flag": false
+//             }
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       "Title": "Terms & Conditions",
+//       "elements": [
+//         {
+//           "type": "link",
+//           "attributes": {
+//             "label": "Read and accept our",
+//             "is_required": false,
+//             "show_label": false,
+//             "url": "https://youtube.com",
+//             "link_text": "Terms & Conditions",
+//             "actions": {
+//               "comment": false,
+//               "camera": false,
+//               "flag": false
+//             }
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       "Title": "Form Guide",
+//       "elements": [
+//         {
+//           "type": "image",
+//           "attributes": {
+//             "label": "Form Details",
+//             "image_url": "https://images.unsplash.com/photo-1707455902309-a94c9f47e60a?q=80&w=1472&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//             "show_label": true,
+//             "alt_text": "Guide to fill the form",
+//             "actions": {
+//               "comment": true,
+//               "camera": false,
+//               "flag": false
+//             }
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       "Title": "submit button",
+//       "elements": [
+//         {
+//           "type": "button",
+//           "attributes": {
+//             "content": "Submit",
+//             "button_type": "submit",
+//             "actions": {
+//               "comment": false,
+//               "camera": false,
+//               "flag": false
+//             }
+//           }
+//         }
+//       ]
+//     }
+//   ]
+// }
+
+
+Demo:any = {
 
   // {
   //     "FormName": "User Registration Form",
@@ -1145,368 +1478,36 @@ export class HomeComponent implements OnChanges {
   // }
  };
 
-// {
-//   "component": [
-//     {
-//       "Title": "Information",
-//       "canCollapsed": true,
-//       "elements": [
-//         {
-//           "type": "text",
-//           "attributes": {
-//             "label": "Full Name",
-//             "field_name": "Name",
-//             "is_required": true,
-//             "placeholder_text": "Enter Your Name",
-//             "show_label": true,
-//             "validations": {
-//               "minlength": "3",
-//               "maxlength": "18"
-//             },
-//             "actions": {
-//               "comment": true,
-//               "camera": true,
-//               "flag": true
-//             }
-//           }
-//         },
-//         {
-//           "type": "text",
-//           "attributes": {
-//             "label": "Email",
-//             "field_name": "Email",
-//             "is_required": true,
-//             "placeholder_text": "Enter Your Email",
-//             "show_label": true,
-//             "validations": {
-//               "pattern": "^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"
-//             },
-//             "actions": {
-//               "comment": true,
-//               "camera": true,
-//               "flag": false
-//             }
-//           }
-//         },
-//         {
-//           "type": "textarea",
-//           "attributes": {
-//             "label": "Address",
-//             "field_name": "Address",
-//             "is_required": true,
-//             "placeholder_text": "Enter Your Address",
-//             "show_label": true,
-//             "actions": {
-//               "comment": false,
-//               "camera": true,
-//               "flag": true
-//             }
-//           }
-//         }
-//       ]
-//     },
-//     {
-//       "Title": "Personal Details",
-//       "canCollapsed": true,
-//       "elements": [
-//         {
-//           "type": "text",
-//           "attributes": {
-//             "label": "Phone No.",
-//             "field_name": "Number",
-//             "is_required": true,
-//             "placeholder_text": "Enter Your Phone No.",
-//             "show_label": true,
-//             "default_value": "+91",
-//             "validations": {
-//               "minlength": "10",
-//               "maxlength": "13",
-//               "pattern": "^(\\+91)?[0-9]{10}$"
-//             },
-//             "actions": {
-//               "comment": true,
-//               "camera": true,
-//               "flag": false
-//             }
-//           }
-//         },
-//         {
-//           "type": "Select",
-//           "multiselect": false,
-//           "attributes": {
-//             "label": "Are you above 18?",
-//             "field_name": "Is adult",
-//             "placeholder_text": "is your age above 18?",
-//             "is_required": true,
-//             "show_label": true,
-//             "DataListId": "67fea30f0b3553c10431067b",
-//             "actions": {
-//               "comment": true,
-//               "camera": true,
-//               "flag": false
-//             }
-//           }
-//         },
-//         {
-//           "type": "date",
-//           "attributes": {
-//             "label": "Date of Birth",
-//             "field_name": "DOB",
-//             "is_required": true,
-//             "show_label": true,
-//             "validations": {
-//               "noFuture": "true",
-//               "minDate": "2000-01-01",
-//               "maxDate": "2025-04-16"
-//             },
-//             "actions": {
-//               "comment": true,
-//               "camera": true,
-//               "flag": false
-//             }
-//           }
-//         },
-//         {
-//           "type": "date",
-//           "attributes": {
-//             "label": "Event Date",
-//             "field_name": "Event date",
-//             "is_required": true,
-//             "show_label": true,
-//             "validations": {
-//               "noPast": "true",
-//               "minDate": "2025-04-16",
-//               "maxDate": "2025-12-31"
-//             },
-//             "actions": {
-//               "comment": true,
-//               "camera": true,
-//               "flag": false
-//             }
-//           }
-//         }
-//       ]
-//     },
-//     {
-//       "Title": "Drop Downs",
-//       "canCollapsed": true,
-//       "elements": [
-//         {
-//           "type": "Select",
-//           "multiselect": false,
-//           "attributes": {
-//             "label": "Are you available?",
-//             "field_name": "is_available",
-//             "placeholder_text": "SELECT ONE",
-//             "DataListId": "67fea30f0b3553c10431067b",
-//             "is_required": true,
-//             "show_label": true,
-//             "actions": {
-//               "comment": true,
-//               "camera": true,
-//               "flag": false
-//             }
-//           }
-//         },
-//         {
-//           "type": "Select",
-//           "multiselect": false,
-//           "attributes": {
-//             "label": "EMPLOYMENT STATUS:",
-//             "field_name": "employment_status",
-//             "placeholder_text": "SELECT ONE",
-//             "is_required": true,
-//             "show_label": true,
-//         	"DataListId": "67fea30f0b3553c10431067b",
-//             "actions": {
-//               "comment": true,
-//               "camera": true,
-//               "flag": false
-//             }
-//           }
-//         },
-//         {
-//           "type": "Select",
-//           "multiselect": false,
-//           "attributes": {
-//             "label": "Select Skills",
-//             "field_name": "skills",
-//             "placeholder_text": "Choose your skills",
-//             "is_required": true,
-//             "show_label": true,
-//             "DataListId": "67fea30f0b3553c10431067b",
-//             "actions": {
-//               "comment": true,
-//               "camera": true,
-//               "flag": false
-//             }
-//           }
-//         }
-//       ]
-//     },
-//     {
-//       "Title": "Grouped Dropdown",
-//       "elements": [
-//         {
-//           "type": "Select",
-//           "multiselect": false,
-//           "attributes": {
-//             "label": "Select Player",
-//             "field_name": "player",
-//             "placeholder_text": "Select Player here",
-//             "is_required": true,
-//             "show_label": true,
-//             "DataListId": "67fea30f0b3553c10431067b",
-//             "actions": {
-//               "comment": true,
-//               "camera": true,
-//               "flag": false
-//             }
-//           }
-//         },
-//         {
-//           "type": "signature",
-//           "attributes": {
-//             "label": "Signature",
-//             "field_name": "signature",
-//             "is_required": true,
-//             "show_label": true,
-//             "pen_color": "black",
-//             "actions": {
-//               "comment": false,
-//               "camera": false,
-//               "flag": false
-//             }
-//           }
-//         },
-//         {
-//           "type": "map",
-//           "attributes": {
-//             "label": "Select Location",
-//             "field_name": "location",
-//             "is_required": true,
-//             "show_label": true,
-//             "default_lat": 28.6139,
-//             "default_lng": 77.209,
-//             "actions": {
-//               "comment": true,
-//               "camera": false,
-//               "flag": false
-//             }
-//           }
-//         },
-//         {
-//           "type": "file",
-//           "attributes": {
-//             "label": "Upload Image",
-//             "field_name": "image",
-//             "is_required": true,
-//             "show_label": true,
-//             "placeholder_text": "Upload Your Image",
-//             "validations": {
-//               "pattern": "\\.(jpg|jpeg|png)$",
-//               "maxSize": "5"
-//             },
-//             "actions": {
-//               "comment": false,
-//               "camera": false,
-//               "flag": false
-//             }
-//           }
-//         }
-//       ]
-//     },
-//     {
-//       "Title": "Terms & Conditions",
-//       "elements": [
-//         {
-//           "type": "link",
-//           "attributes": {
-//             "label": "Read and accept our",
-//             "is_required": false,
-//             "show_label": false,
-//             "url": "https://youtube.com",
-//             "link_text": "Terms & Conditions",
-//             "actions": {
-//               "comment": false,
-//               "camera": false,
-//               "flag": false
-//             }
-//           }
-//         }
-//       ]
-//     },
-//     {
-//       "Title": "Form Guide",
-//       "elements": [
-//         {
-//           "type": "image",
-//           "attributes": {
-//             "label": "Form Details",
-//             "image_url": "https://images.unsplash.com/photo-1707455902309-a94c9f47e60a?q=80&w=1472&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//             "show_label": true,
-//             "alt_text": "Guide to fill the form",
-//             "actions": {
-//               "comment": true,
-//               "camera": false,
-//               "flag": false
-//             }
-//           }
-//         }
-//       ]
-//     },
-//     {
-//       "Title": "submit button",
-//       "elements": [
-//         {
-//           "type": "button",
-//           "attributes": {
-//             "content": "Submit",
-//             "button_type": "submit",
-//             "actions": {
-//               "comment": false,
-//               "camera": false,
-//               "flag": false
-//             }
-//           }
-//         }
-//       ]
-//     }
-//   ]
-// }
-
-
-// {
-//       "FormName": "User Registration Form",
-//       "UserName": "john.doe",
-//       "CreatedBy": "adminUser01",
-//     "component": [
-//       {
-//         "Title": "Label",
-//         "canCollapsed": false,
-//         "isCollapsed": false,
-//         "elements": [
-//           {
-//             "type": "text",
-//             "attributes": {
-//               "label": "Label",
-//               "field_name": "Label",
-//               "is_required": true,
-//               "placeholder_text": "Type your Label",
-//               "show_label": false,
-//               "validations": {
-//                 "minlength": "3",
-//                 "maxlength": "12"
-//               },
-//               "actions": {
-//                 "comment": true,
-//                 "camera": false,
-//                 "flag": false
-//               }
-//             }
-//           }
-//         ]
-//       },
-//     ]
-// }
+  // { "FormName": "User Registration Form",
+  //       "UserName": "john.doe",
+  //       "CreatedBy": "adminUser01",
+  //     "component": [
+  //       {
+  //         "Title": "Label",
+  //         "canCollapsed": false,
+  //         "isCollapsed": false,
+  //         "elements": [
+  //           {
+  //             "type": "text",
+  //             "attributes": {
+  //               "label": "Label",
+  //               "field_name": "Label",
+  //               "is_required": true,
+  //               "placeholder_text": "Type your Label",
+  //               "show_label": false,
+  //               "validations": {
+  //                 "minlength": "3",
+  //                 "maxlength": "12"
+  //               },
+  //               "actions": {
+  //                 "comment": true,
+  //                 "camera": false,
+  //                 "flag": false
+  //               }
+  //             }
+  //           }
+  //         ]
+  //       },
+  //     ]
+  // }
 }

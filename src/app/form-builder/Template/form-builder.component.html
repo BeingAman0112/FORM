@@ -8,12 +8,24 @@
       <i class="fas fa-plus-circle"></i> Create a Form
     </button>
 
-    <h4>Form Components</h4>
-    <ul class="component-list">
-      <li class="component-item" (click)="addSection()">
-        <i class="fas fa-layer-group"></i> Add Section
+    <h4>Form Elements</h4>
+    <ul class="component-list" *ngIf="showElementSelection">
+      <li class="component-item" (click)="addTextFieldElement()">
+        <i class="fas fa-font"></i> Text
+      </li>
+      <li class="component-item" (click)="addEmailFieldElement()">
+        <i class="fas fa-envelope"></i> Email
+      </li>
+      <li class="component-item" (click)="addNumberFieldElement()">
+        <i class="fas fa-hashtag"></i> Number
+      </li>
+      <li class="component-item cancel" (click)="hideElementSelectionSidebar()">
+        <i class="fas fa-times"></i> Cancel
       </li>
     </ul>
+    <div class="sidebar-message" *ngIf="!showElementSelection">
+      <p>Click "Add Item" in a section to add form elements.</p>
+    </div>
   </div>
 
   <!-- Main Form Building Area -->
@@ -60,13 +72,53 @@
           </div>
 
           <!-- Form Elements would go here -->
-          <div *ngFor="let element of section.elements; let elementIndex = index" class="form-element">
-            <!-- Element content would go here -->
+          <div class="form-elements-list">
+            <div *ngFor="let element of section.elements; let elementIndex = index" class="form-element-row">
+              <!-- Required Star Icon -->
+              <div class="element-required" (click)="toggleRequired(element)">
+                <i class="fas fa-star" [ngClass]="{'required': element.attributes.is_required, 'not-required': !element.attributes.is_required}"></i>
+              </div>
+
+              <!-- Element Type Icon -->
+              <div class="element-type-icon">
+                <i *ngIf="element.type === 'text'" class="fas fa-font"></i>
+                <i *ngIf="element.type === 'email'" class="fas fa-envelope"></i>
+                <i *ngIf="element.type === 'number'" class="fas fa-hashtag"></i>
+              </div>
+
+              <!-- Element Label -->
+              <div class="element-label">
+                <input type="text" [(ngModel)]="element.attributes.label"
+                       (ngModelChange)="updateFieldName(element, $event, section.title)"
+                       placeholder="Label">
+              </div>
+
+              <!-- Element Placeholder -->
+              <div class="element-placeholder">
+                <input type="text" [(ngModel)]="element.attributes.placeholder_text" placeholder="Placeholder">
+              </div>
+
+              <!-- Show Label Checkbox -->
+              <div class="element-show-label">
+                <div class="checkbox-wrapper">
+                  <input type="checkbox" [(ngModel)]="element.attributes.show_label"
+                         id="show-label-{{sectionIndex}}-{{elementIndex}}">
+                  <label for="show-label-{{sectionIndex}}-{{elementIndex}}">Show Label</label>
+                </div>
+              </div>
+
+              <!-- Element Actions -->
+              <div class="element-actions">
+                <button class="btn-icon delete-btn" (click)="deleteElement(section, elementIndex)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
           </div>
 
-          <!-- Add Element Button -->
-          <button class="btn-add-element">
-            <i class="fas fa-plus"></i> Add Element
+          <!-- Add Item Button -->
+          <button class="btn-add-element" (click)="showElementSelectionSidebar(section)">
+            <i class="fas fa-plus"></i> Add Item
           </button>
         </div>
       </div>
