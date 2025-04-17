@@ -1,18 +1,22 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { HomeModule } from './home/home.module';
+import { AppRoutingModule } from './app-routing.module';
+import { FormBuilderModule } from './form-builder/form-builder.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
-    RouterOutlet,
     BrowserModule,
+    RouterModule,
+    AppRoutingModule,
     HomeModule,
+    FormBuilderModule,
   ],
   providers: [provideHttpClient()],
   bootstrap: [AppComponent]

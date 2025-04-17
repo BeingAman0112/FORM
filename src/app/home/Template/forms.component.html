@@ -1,3 +1,37 @@
+<div class="forms-container">
 
+  <!-- Sidebar -->
+  <div class="sidebar" [class.collapsed]="isSidebarCollapsed">
+    <div class="sidebar-header">
+      <h3>Forms List</h3>
+    </div>
+    <div class="sidebar-content">
+      <ul class="forms-list">
+        <li *ngFor="let form of formsList"
+            [class.active]="selectedFormId === form.id"
+            (click)="selectForm(form)">
+          <span class="form-name">{{ form.formName || 'Unnamed Form' }}</span>
+        </li>
+      </ul>
+      <div *ngIf="formsList.length === 0" class="no-forms">
+        No forms available
+      </div>
+    </div>
+  </div>
 
-<a routerLink="/Form">click here</a>
+  <!-- Main Content -->
+  <div class="main-content" [class.expanded]="isSidebarCollapsed">
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle" (click)="toggleSidebar()">
+      <i class="fas" [ngClass]="{'fa-chevron-right': isSidebarCollapsed, 'fa-chevron-left': !isSidebarCollapsed}"></i>
+    </button>
+    <div *ngIf="selectedFormId" class="form-details">
+      <!-- Form details will be displayed here -->
+      <app-home [formId]="selectedFormId"></app-home>
+      <!-- Form content goes here -->
+    </div>
+    <div *ngIf="!selectedFormId" class="no-selection">
+      <p>Select a form from the sidebar to view details</p>
+    </div>
+  </div>
+</div>

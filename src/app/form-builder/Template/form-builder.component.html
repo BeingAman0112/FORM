@@ -1,0 +1,119 @@
+<div class="form-builder-container">
+  <!-- Left Sidebar - Component Palette -->
+  <div class="component-palette">
+    <h3>Form Builder</h3>
+
+    <!-- Create Form Button -->
+    <button class="create-form-btn" (click)="showCreateFormModal = true">
+      <i class="fas fa-plus-circle"></i> Create a Form
+    </button>
+
+    <h4>Form Components</h4>
+    <ul class="component-list">
+      <li class="component-item" (click)="addSection()">
+        <i class="fas fa-layer-group"></i> Add Section
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Form Building Area -->
+  <div class="form-building-area">
+    <!-- Form Header with Form Name -->
+    <div class="form-header">
+      <h2 *ngIf="formData.formName">{{ formData.formName }}</h2>
+      <div class="form-metadata">
+        <div class="metadata-row" *ngIf="formData.userName">
+          <span class="metadata-label">User:</span>
+          <span class="metadata-value">{{ formData.userName }}</span>
+        </div>
+        <div class="metadata-row" *ngIf="formData.createdBy">
+          <span class="metadata-label">Created By:</span>
+          <span class="metadata-value">{{ formData.createdBy }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Sections -->
+    <div class="form-preview">
+      <div *ngFor="let section of formData.component; let sectionIndex = index" class="form-section">
+        <!-- Section Header -->
+        <div class="section-header">
+          <div class="section-title">
+            <i class="fas fa-bars drag-handle"></i>
+            <span class="required-indicator">*</span>
+            <input type="text" [(ngModel)]="section.title" (ngModelChange)="updateSectionTitle(section, $event)" placeholder="Section Title">
+          </div>
+          <div class="section-actions">
+            <button class="btn-icon" *ngIf="section.canCollapsed" (click)="section.isCollapsed = !section.isCollapsed">
+              <i class="fas" [ngClass]="{'fa-chevron-down': !section.isCollapsed, 'fa-chevron-up': section.isCollapsed}"></i>
+            </button>
+            <button class="btn-icon">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Section Content -->
+        <div class="section-content" *ngIf="!section.isCollapsed">
+          <div class="empty-section-message" *ngIf="section.elements.length === 0">
+            <p>This section is empty. Add form elements from the sidebar.</p>
+          </div>
+
+          <!-- Form Elements would go here -->
+          <div *ngFor="let element of section.elements; let elementIndex = index" class="form-element">
+            <!-- Element content would go here -->
+          </div>
+
+          <!-- Add Element Button -->
+          <button class="btn-add-element">
+            <i class="fas fa-plus"></i> Add Element
+          </button>
+        </div>
+      </div>
+
+      <!-- Add Section Button -->
+      <button class="btn-add-section" (click)="addSection()">
+        <i class="fas fa-plus"></i> Add Section
+      </button>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button class="btn-primary" (click)="saveForm()">
+        <i class="fas fa-save"></i> Save Form
+      </button>
+    </div>
+  </div>
+
+  <!-- Create Form Modal -->
+  <div class="modal" *ngIf="showCreateFormModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Create New Form</h3>
+        <button class="close-btn" (click)="showCreateFormModal = false">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="createFormForm" (ngSubmit)="createNewForm()">
+          <div class="form-group">
+            <label for="newFormName">Form Name</label>
+            <input type="text" id="newFormName" formControlName="formName" placeholder="Enter form name">
+          </div>
+          <div class="form-group">
+            <label for="newUserName">User Name</label>
+            <input type="text" id="newUserName" formControlName="userName" placeholder="Enter your username">
+          </div>
+          <div class="form-group">
+            <label for="newCreatedBy">Created By</label>
+            <input type="text" id="newCreatedBy" formControlName="createdBy" placeholder="Enter creator name">
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" (click)="showCreateFormModal = false">Cancel</button>
+            <button type="submit" class="btn-primary">Create Form</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

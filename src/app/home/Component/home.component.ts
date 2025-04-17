@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormControl } from '@angular/forms';
 import SignaturePad from 'signature_pad';
 import { FormComponent, FormJson, FormSection } from '../Model/model';
@@ -12,7 +12,8 @@ import { CoreDataService } from '../../core-data.service';
   templateUrl: '../Template/home.component.html',
   styleUrl: '../Style/home.component.css'
 })
-export class HomeComponent {
+export class HomeComponent implements OnChanges {
+  @Input() formId: string = '';
   @ViewChild('signaturePad', { static: false }) signaturePadElement!: ElementRef;
   visibleComments: { [key: string]: boolean } = {};
   private signaturePad!: SignaturePad;
@@ -22,25 +23,83 @@ export class HomeComponent {
     canvasWidth: 400,
     canvasHeight: 150
   };
+  formGroup : FormGroup;
+  constructor(private fb: FormBuilder, protected coreDataService: CoreDataService) {
+    this.formGroup = this.fb.group({
+      skills: [[]],
+    });
+
+  }
+  uploadedImages: { [key: string]: string | ArrayBuffer | null } = {};
   demo2!:FormJson;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['formId'] && changes['formId'].currentValue) {
+      this.loadForm(changes['formId'].currentValue);
+    }
+  }
+
   ngOnInit() {
-    this.coreDataService.getFormByID("67ff472eb05c197ee80cf831").subscribe((data:any) => {
-      this.demo2 = data;
-      console.log(this.demo2);
-      this.buildForm();
-    })
-    // this.buildForm();
+    // If formId is provided on init, load that form
+    if (this.formId) {
+      this.loadForm(this.formId);
+    } else {
+      // Otherwise load the default form
+      this.loadForm("67ff472eb05c197ee80cf831");
+    }
+  }
+
+  loadForm(id: string) {
+    // Reset form state before loading new form
+    this.resetForm();
+
+    this.coreDataService.getFormByID(id).subscribe({
+      next: (data: any) => {
+        this.demo2 = data;
+        console.log('Loaded form:', this.demo2);
+        this.buildForm();
+      },
+      error: (err) => {
+        console.error('Error loading form:', err);
+      }
+    });
+  }
+
+  resetForm() {
+    // Reset form state
+    this.visibleComments = {};
+    if (this.formGroup) {
+      this.formGroup = this.fb.group({
+        skills: [[]]
+      });
+    }
   }
 
   ngAfterViewInit() {
-    if (this.signaturePadElement) {
-      this.signaturePad = new SignaturePad(this.signaturePadElement.nativeElement, {
-        penColor: this.signatureColor,
-        backgroundColor: 'white',
-        minWidth: 1,
-        maxWidth: 3
-      });
-    }
+    this.initializeSignaturePad();
+  }
+
+  initializeSignaturePad() {
+    setTimeout(() => {
+      if (this.signaturePadElement && this.signaturePadElement.nativeElement) {
+        // Clear any existing signature pad
+        if (this.signaturePad) {
+          this.signaturePad.clear();
+        }
+
+        // Initialize the signature pad with proper settings
+        this.signaturePad = new SignaturePad(this.signaturePadElement.nativeElement, {
+          penColor: this.signatureColor,
+          backgroundColor: 'white',
+          minWidth: 1,
+          maxWidth: 3
+        });
+
+        console.log('Signature pad initialized');
+      } else {
+        console.log('Signature pad element not found');
+      }
+    }, 100); // Short delay to ensure the DOM is ready
   }
   changePenColor(event: any) {
     this.signatureColor = event.target.value;
@@ -51,20 +110,18 @@ export class HomeComponent {
   }
 
   saveSignature() {
-    const signatureDataUrl = this.signaturePad.toDataURL();
-    console.log("Signature Saved:", signatureDataUrl);
-    this.formGroup.get('signature')?.setValue(signatureDataUrl);
+    if (this.signaturePad && !this.signaturePad.isEmpty()) {
+      const signatureDataUrl = this.signaturePad.toDataURL();
+      console.log("Signature Saved");
+      this.formGroup.get('signature')?.setValue(signatureDataUrl);
+    } else {
+      console.log("Signature pad is empty");
+      alert('Please sign before saving.');
+    }
   }
 
   signaturePads: { [key: string]: SignaturePad } = {}; // Store signature pads dynamically
   // Formly configuration for the form fields
-  formGroup : FormGroup;
-  constructor(private fb: FormBuilder, protected coreDataService: CoreDataService) {
-    this.formGroup = this.fb.group({
-      skills: [[]],
-    });
-
-  }
 
   fileValidator(validations: any): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -183,6 +240,11 @@ export class HomeComponent {
         section.isCollapsed = false; // Initially expanded
       }
     });
+
+    // Initialize signature pad after form is built
+    setTimeout(() => {
+      this.initializeSignaturePad();
+    }, 100);
   }
 
 
@@ -244,406 +306,7 @@ export class HomeComponent {
     console.log("Form Submitted Successfully", this.formGroup.value);
   }
 
-  // JSON configuration for the form
-  // This JSON structure is used to dynamically generate the form fields
 
-Age = [{
-    title:"Age",
-      items:[
-        {label: "Yes", value: "Yes"},
-        {label: "No", value: "No"}
-      ]
-  }]
-skills =[{
-    title: "Skills",
-    items:[
-      { label: "Angular", value: "Angular" },
-      { label: "Java", value: "Java" },
-      { label: "HTML + CSS", value: "HTML + CSS" },
-      { label: "Spring-Boot", value: "Spring-Boot" }
-    ]
-}]
-employementStatus = [{
-    title: "JOB Type",
-      items:[
-        {  value: "full_time" },
-        {  value: "part_time" },
-        {  value: "unemployed" },
-        {  value: "full_time" },
-        {  value: "part_time" },
-        {  value: "unemployed" },
-        {  value: "full_time" },
-        {  value: "part_time" },
-        {  value: "unemployed" },
-      ]
-  }]
-players=[
-    {
-      title: "Cars",
-      items: [
-        { value: "Audi" },
-        { value: "BMW" }
-      ]
-    },
-    {
-      title: "Bike",
-      items: [
-        { value: "GT continantal" },
-        { value: "R1 5" }
-      ]
-    },
-    {
-      title: "City",
-      items: [
-        { value: "Kanpur" },
-        { value: "Gurugram" }
-      ]
-    },
-    {
-      title: "Bike",
-      items: [
-        { value: "GT 650" },
-        { value: "Ninja 10xR" }
-      ]
-    },
-    {
-      title: "City",
-      items: [
-        { value: "Delhi" },
-        { value: "Noida" }
-      ]
-    },
-  ];
-  formJson:any = {
-    // component: [
-    //   {
-    //     Title: "Information",
-    //     canCollapsed: true,
-    //     elements: [
-    //       {
-    //         // name: "Input",
-    //         type: "text",
-    //         attributes: {
-    //           label: "Full Name",
-    //           field_name: "Name",
-    //           is_required: true,
-    //           placeholder_text: "Enter Your Name",
-    //           show_label: true,
-    //           validations: { minlength: 3, maxlength: 18 },
-    //           actions: {
-    //             comment: true,
-    //             camera: true,
-    //             flag: true
-    //           }
-    //         },
-    //       },
-    //       {
-    //         type: "text",
-    //         attributes: {
-    //           label: "Email",
-    //           field_name: "Email",
-    //           is_required: true,
-    //           placeholder_text: "Enter Your Email",
-    //           show_label: true,
-    //           validations: {
-    //             pattern: "^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"
-    //           },
-    //           actions: {
-    //             comment: true,
-    //             camera: true,
-    //             flag: false
-    //           }
-    //         },
-    //       },
-    //       {
-    //         type: "textarea",
-    //         attributes: {
-    //           label: "Address",
-    //           field_name: "Address",
-    //           is_required: true,
-    //           placeholder_text: "Enter Your Address",
-    //           show_label: true,
-    //           actions: {
-    //             comment: false,
-    //             camera: true,
-    //             flag: true
-    //           }
-    //         },
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     Title: "Personal Details",
-    //     canCollapsed: true,
-    //     elements: [
-    //       {
-    //         type: "text",
-    //         attributes: {
-    //           label: "Phone No.",
-    //           field_name: "Number",
-    //           is_required: true,
-    //           placeholder_text: "Enter Your Phone No.",
-    //           show_label: true,
-    //           default_value: "+91",
-    //           validations: {
-    //             minlength: 10,
-    //             maxlength: 13,
-    //             pattern: "^(\\+91)?[0-9]{10}$"
-    //           },
-    //           actions: {
-    //             comment: true,
-    //             camera: true,
-    //             flag: false
-    //           }
-    //         },
-    //       },
-    //       {
-    //         type: "Select",
-    //         multiselect: false,
-    //         attributes: {
-    //           label: "Are you above 18?",
-    //           field_name: "Is adult",
-    //           placeholder_text: "is your age above 18?",
-    //           is_required: true,
-    //           show_label: true,
-    //           actions: {
-    //             comment: true,
-    //             camera: true,
-    //             flag: false
-    //           },
-    //           DataSource: this.Age,
-    //         },
-    //       },
-    //       {
-    //         type: "date",
-    //         attributes: {
-    //           label: "Date of Birth",
-    //           field_name: "DOB",
-    //           is_required: true,
-    //           show_label: true,
-    //           validations: {
-    //             noFuture: true,
-    //             minDate: "2000-01-01",
-    //             maxDate: new Date().toISOString().split("T")[0]
-    //           },
-    //           actions: {
-    //             comment: true,
-    //             camera: true,
-    //             flag: false
-    //           }
-    //         },
-    //       },
-    //       {
-    //         type: "date",
-    //         attributes: {
-    //           label: "Event Date",
-    //           field_name: "Event date",
-    //           is_required: true,
-    //           show_label: true,
-    //           validations: {
-    //             noPast: true,
-    //             minDate: new Date().toISOString().split("T")[0],
-    //             maxDate: "2025-12-31"
-    //           },
-    //           actions: {
-    //             comment: true,
-    //             camera: true,
-    //             flag: false
-    //           }
-    //         },
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     Title: "Drop Downs",
-    //     canCollapsed: true,
-    //     elements: [
-    //       {
-    //         type: "Select",
-    //         multiselect: false,
-    //         attributes: {
-    //           label: "Are you available?",
-    //           field_name: "is_available",
-    //           placeholder_text: "SELECT ONE",
-    //           is_required: true,
-    //           show_label: true,
-    //           DataSource: this.Age,
-    //             actions: {
-    //               comment: true,
-    //               camera: true,
-    //               flag: false
-    //             }
-    //         },
-    //       },
-    //       {
-    //         type: "Select",
-    //         multiselect: false,
-    //         attributes: {
-    //           label: "EMPLOYMENT STATUS:",
-    //           field_name: "employment_status",
-    //           placeholder_text: "SELECT ONE",
-    //           is_required: true,
-    //           show_label: true,
-    //           DataSource: this.employementStatus,
-    //           actions: {
-    //             comment: true,
-    //             camera: true,
-    //             flag: false
-    //           }
-    //         },
-    //       },
-    //       {
-    //         type: "Select",
-    //         multiselect: false,
-    //         attributes: {
-    //           label: "Select Skills",
-    //           field_name: "skills",
-    //           placeholder_text: "Choose your skills",
-    //           is_required: true,
-    //           DataSource: this.skills,
-    //           show_label: true,
-    //           actions: {
-    //             comment: true,
-    //             camera: true,
-    //             flag: false
-    //           }
-    //         },
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     Title: "Grouped Dropdown",
-    //     elements: [
-    //       {
-    //         type: "Select",
-    //         multiselect: false,
-    //         attributes: {
-    //           label: "Select Player",
-    //           field_name: "player",
-    //           placeholder_text: "Select Player here",
-    //           is_required: true,
-    //           show_label: true,
-    //           DataSource: this.players,
-    //           actions: {
-    //             comment: true,
-    //             camera: true,
-    //             flag: false
-    //           }
-    //         },
-    //       },
-    //       {
-    //         type: "signature",
-    //         attributes: {
-    //           label: "Signature",
-    //           field_name: "signature",
-    //           is_required: true,
-    //           show_label: true,
-    //           pen_color: "black",
-    //           actions: {
-    //             comment: false,
-    //             camera: false,
-    //             flag: false
-    //           }
-    //         },
-    //       },
-    //       {
-    //         type: "map",
-    //         attributes: {
-    //           label: "Select Location",
-    //           field_name: "location",
-    //           is_required: true,
-    //           show_label: true,
-    //           default_lat: 28.6139,
-    //           default_lng: 77.209,
-    //           actions: {
-    //             comment: true,
-    //             camera: false,
-    //             flag: false
-    //           }
-    //         },
-    //       },
-    //       {
-    //         type: "file",
-    //         attributes: {
-    //           label: "Upload Image",
-    //           field_name: "image",
-    //           is_required: true,
-    //           show_label: true,
-    //           placeholder_text: "Upload Your Image",
-    //           validations: {
-    //             pattern: "\\.(jpg|jpeg|png)$",
-    //             maxSize: 5
-    //           },
-    //           actions: {
-    //             comment: false,
-    //             camera: false,
-    //             flag: false
-    //           }
-    //         },
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     Title: "Terms & Conditions",
-    //     elements: [
-    //       {
-    //         type: "link",
-    //         attributes: {
-    //           label: "Read and accept our",
-    //           is_required: false,
-    //           show_label: false,
-    //           url: "https://youtube.com",
-    //           link_text: "Terms & Conditions",
-    //           actions: {
-    //             comment: false,
-    //             camera: false,
-    //             flag: false
-    //           }
-    //         },
-    //       },
-    //     ]
-    //   },
-    //   {
-    //     Title: "Form Guide",
-    //     elements: [
-    //       {
-    //         type: "image",
-    //         attributes: {
-    //           label: "Form Details",
-    //           image_url: "https://images.unsplash.com/photo-1707455902309-a94c9f47e60a?q=80&w=1472&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    //           show_label: true,
-    //           alt_text: "Guide to fill the form",
-    //           actions: {
-    //             comment: true,
-    //             camera: false,
-    //             flag: false
-    //           }
-    //         },
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     Title: "submit button",
-    //     elements: [
-    //       {
-    //         type: "button",
-    //         attributes: {
-    //           content: "Submit",
-    //           button_type: "submit",
-    //           actions: {
-    //             comment: false,
-    //             camera: false,
-    //             flag: false
-    //           }
-    //         }
-    //       }
-    //     ]
-    //   }
-    // ]
-  };
-
-
-    uploadedImages: { [key: string]: string | ArrayBuffer | null } = {};
 
     onFileSelect(event: Event, fieldName: string) {
       const input = event.target as HTMLInputElement;
@@ -711,105 +374,6 @@ players=[
     onFlag(component: any) {
       console.log("Flag clicked for", component.attributes.field_name);
     }
-
-AREA_OF_INCIDENT=[
-  {
-    title: "AREA OF INCIDENT",
-    items: [
-      { value: "INJURY" },
-      { value: "ILLNESS" },
-      { value: "EQUIPMENT" },
-      { value: "VEHICLE" },
-      { value: "MATERIAL" },
-      { value: "OTHER" }
-    ]
-  }
-]
-REPORT_TYPE=[
-  {
-    list:[{
-
-      title: "REPORT TYPE",
-      items: [
-        { value: "Injury related to travel" },
-        { value: "Incident with work related illness" },
-        { value: "Incident with work related injury" },
-        { value: "Electric shock" },
-        { value: "Incident with no injury or illness (e.g. near miss, security)" },
-        { value: "Property damage" },
-        { value: "Environmental spill / release" },
-        { value: "Theft" }
-      ]
-    }]
-  }
-]
-PHYSICAL_BODY_LOCATION =[
-  {
-    list:[{
-
-      title: "MAIN BODY LOCATION",
-      items: [
-        { value: "Head" },
-        { value: "Neck" },
-        { value: "Shoulder" },
-        { value: "Arm" },
-        { value: "Hand" },
-        { value: "Finger" },
-        { value: "Back" },
-        { value: "Hip" },
-        { value: "Leg" },
-      ]
-    },
-    {
-      title: "OTHER BODY LOCATION",
-      items: [
-        { value: "Eye" },
-        { value: "Ear" },
-        { value: "Foot" },
-        { value: "Toe" },
-        { value: "Ankle" },
-        { value: "Knee" },
-        { value: "Elbow" },
-        { value: "Wrist" },
-        { value: "Tooth" },
-      ]
-    }]
-}
-]
-MECHANISM_OF_INJURY=[
-  {
-    list:[{
-
-      Title: "MECHANISM OF INJURY",
-      items: [
-        { value: "Exposure to biological material" },
-        { value: "Exposure to chemicals" },
-        { value: "Exposure to electricity" },
-        { value: "Exposure to heat/cold" },
-        { value: "Exposure to radiation" },
-        { value: "Exposure to vibration" },
-        { value: "Exposure to sharp object" },
-      ]
-    }]
-    }
-]
-NATURE_OF_INJURY=[
-  {
-    list:[{
-
-      Title: "NATURE OF INJURY",
-      items: [
-        { value: "Contusion/crush" },
-        { value: "Laceration/open wound" },
-        { value: "Concussion" },
-        { value: "Superficial injury" },
-        { value: "Sprain/strain" },
-        { value: "Dislocation" },
-        { value: "Concussion" },
-      ]
-    }]
-  }
-]
 
  Demo:any = {
 
@@ -1911,4 +1475,38 @@ NATURE_OF_INJURY=[
 //   ]
 // }
 
+
+// {
+//       "FormName": "User Registration Form",
+//       "UserName": "john.doe",
+//       "CreatedBy": "adminUser01",
+//     "component": [
+//       {
+//         "Title": "Label",
+//         "canCollapsed": false,
+//         "isCollapsed": false,
+//         "elements": [
+//           {
+//             "type": "text",
+//             "attributes": {
+//               "label": "Label",
+//               "field_name": "Label",
+//               "is_required": true,
+//               "placeholder_text": "Type your Label",
+//               "show_label": false,
+//               "validations": {
+//                 "minlength": "3",
+//                 "maxlength": "12"
+//               },
+//               "actions": {
+//                 "comment": true,
+//                 "camera": false,
+//                 "flag": false
+//               }
+//             }
+//           }
+//         ]
+//       },
+//     ]
+// }
 }

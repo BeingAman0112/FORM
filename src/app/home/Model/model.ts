@@ -5,6 +5,7 @@ export interface DateValidations {
   noPast?: boolean;
 }
 export interface FormJson {
+  id?: string;
   userName?:string;
   formName?:string;
   createdBy?:string;
@@ -43,12 +44,13 @@ export interface FormComponent {
     content?:string;
     button_type?:string;
     dataListId?:string;
-    dataSource?: any;
+    dataSource?: DropdownData;
     // Add other properties as needed
   };
 }
 export interface DropdownData {
   id?: string;
+  listName?: string;
   list: FormListData[];
 }
 

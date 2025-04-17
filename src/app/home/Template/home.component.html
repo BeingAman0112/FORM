@@ -29,7 +29,7 @@
       <h3 (click)="toggleSectionCollapse(section)" [class.collapsible]="section.canCollapsed">
         {{ section.title }}
         <span *ngIf="section.canCollapsed" class="collapse-icon">
-          <i class="fas" [ngClass]="{'fas fa-chevron-down': !section.isCollapsed, 'fas fa-chevron-up': section.isCollapsed}"></i>
+          <i class="fas" [ngClass]="{'fa-chevron-down': !section.isCollapsed, 'fa-chevron-up': section.isCollapsed}"></i>
         </span>
       </h3>
       <ng-container *ngIf="!section.isCollapsed">

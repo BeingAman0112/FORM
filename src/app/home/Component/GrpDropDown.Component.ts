@@ -9,6 +9,7 @@ import { DropdownData, FormListData } from '../Model/model';
   imports: [CommonModule, FormsModule],
   template:`
   <div class="form-group">
+  <i class="far fa-check-circle action-icons"></i>
   <button type="button" class="select-one-btn" (click)="openPopup()">
     {{  placeholder }}
   </button>
@@ -181,6 +182,15 @@ import { DropdownData, FormListData } from '../Model/model';
     border-bottom: 1px solid #eee;
     margin-bottom: 12px;
   }
+}
+.action-icons {
+  color: #2196F3;
+  font-size: 16px;
+  text-decoration: none;
+  transition: color 0.2s;
+  padding: 5px;
+  border: none;
+  // background-color: rgba(33, 150, 243, 0.1);
 }
 
 .search-container {
